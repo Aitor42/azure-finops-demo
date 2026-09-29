@@ -1,0 +1,55 @@
+name: Infracost cost estimate
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  cost-estimate:
+    name: PR cost estimate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # This job needs two things to actually run:
+      #   - INFRACOST_API_KEY (repository secret from infracost.io)
+      #   - Azure credentials for the Terraform plan + the remote backend
+      #     configured (see terraform/backend.hcl).
+      # Without INFRACOST_API_KEY it skips cleanly, so the check stays green.
+      - name: Check Infracost configuration
+        id: check
+        run: |
+          if [ -n "${{ secrets.INFRACOST_API_KEY }}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::INFRACOST_API_KEY not set — skipping cost estimate."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Infracost
+        if: steps.check.outputs.enabled == 'true'
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Generate cost estimate
+        if: steps.check.outputs.enabled == 'true'
+        run: |
+          infracost breakdown --path terraform --format json --out-file /tmp/infracost.json
+
+      - name: Post PR comment
+        if: steps.check.outputs.enabled == 'true' && github.event_name == 'pull_request'
+        run: |
+          infracost comment github \
+            --path /tmp/infracost.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --pull-request "${{ github.event.pull_request.number }}"
