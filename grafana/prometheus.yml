@@ -1,0 +1,14 @@
+# Scrape interval: cost data is daily-granularity (the exporter polls Azure
+# hourly), so 5m is more than enough. Don't raise this too high: Prometheus
+# delays the FIRST scrape of a target by up to the scrape interval (with 1h the
+# dashboard showed no data for up to an hour).
+global:
+  scrape_interval: 5m
+  evaluation_interval: 5m
+
+scrape_configs:
+  - job_name: "azure-cost-exporter"
+    static_configs:
+      # Prometheus runs with host networking, so localhost is the host loopback
+      # where cost_exporter.py listens.
+      - targets: ["localhost:9099"]
