@@ -1,0 +1,57 @@
+# Python tooling configuration for scripts/.
+# Run:  ruff check scripts/   |  mypy scripts/
+
+[project]
+name = "azure-finops-demo"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["scripts"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort (import order)
+    "N",    # pep8-naming
+    "UP",   # pyupgrade (modern syntax)
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific rules
+    "BLE",  # flake8-blind-except
+]
+ignore = [
+    "BLE001",  # allow broad exception in top-level loops (cost_exporter poll)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cost_exporter", "finops_scan"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "azure.*",
+    "prometheus_client.*",
+    "pytest.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+check_untyped_defs = true
+disable_error_code = ["method-assign"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["scripts"]

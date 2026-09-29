@@ -1,0 +1,33 @@
+# Trivy IaC scan exceptions. This is a disposable FinOps demo torn down with
+# `terraform destroy`, so several production-only controls are intentionally
+# disabled. Each ignore below has its rationale.
+
+# Public static demo site — mutual-TLS client certificates would block normal access.
+AVD-AZU-0001
+
+# Static site doesn't authenticate to downstream services, so no managed identity.
+AVD-AZU-0002
+
+# Demo content is intentionally public (no auth backend).
+AVD-AZU-0003
+
+# Restricting Key Vault network access would lock out `az` CLI / Terraform data plane.
+AVD-AZU-0013
+
+# Purge protection is irreversible; left off so `terraform destroy` can clean up.
+AVD-AZU-0016
+
+# Restricting storage network would break the daily Cost Management export.
+AVD-AZU-0012
+
+# Storage analytics logging is out of scope (see Azure Monitor diagnostic settings).
+AVD-AZU-0057
+
+# LRS is a deliberate cost choice (FinOps); GRS would double the cost of a demo.
+AVD-AZU-0058
+
+# Customer-managed keys are overkill for a demo cost-export container.
+AVD-AZU-0060
+
+# Infrastructure double-encryption is overkill and not available in every region.
+AVD-AZU-0061
