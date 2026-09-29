@@ -1,0 +1,9 @@
+# Script dependencies (use a venv):
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+azure-identity>=1.16
+azure-mgmt-compute>=31.0
+azure-mgmt-network>=25.0
+azure-mgmt-resource>=23.0
+prometheus-client>=0.19
+requests>=2.31
