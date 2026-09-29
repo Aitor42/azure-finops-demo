@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars and edit it:
+#   cp terraform.tfvars.example terraform.tfvars
+
+prefix         = "finops"
+location       = "West Europe"
+cost_center    = "cloud-demo"
+owner             = "cloud-team"
+alert_email       = "you@example.com"
+monthly_budget    = 30
+enable_automation = true

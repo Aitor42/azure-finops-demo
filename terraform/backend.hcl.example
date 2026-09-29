@@ -1,0 +1,6 @@
+# Copy to backend.hcl and fill in the values printed by scripts/bootstrap_backend.sh:
+#   cp backend.hcl.example backend.hcl
+resource_group_name  = "rg-tfstate"
+storage_account_name = "sttfstateREPLACEME"
+container_name       = "tfstate"
+key                  = "finops-demo.tfstate"
